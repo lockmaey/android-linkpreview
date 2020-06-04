@@ -90,7 +90,7 @@ class GetSourceSync(
         }
 
         val finalLinkSet = sourceContent.finalUrl.split("&".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()
-        sourceContent.url = finalLinkSet[0]
+         sourceContent.url = if(finalLinkSet.isNotEmpty()) finalLinkSet[0] else sourceContent.finalUrl
         sourceContent.canonicalUrl = cannonicalPage(sourceContent.finalUrl)
         sourceContent.description = stripTags(sourceContent.description)
 
@@ -174,12 +174,12 @@ class GetSourceSync(
 
         val result: String
 
-        if (resultParagraph.length > resultSpan.length && resultParagraph.length >= resultDiv.length)
-            result = resultParagraph
+        result = if (resultParagraph.length > resultSpan.length && resultParagraph.length >= resultDiv.length)
+            resultParagraph
         else if (resultParagraph.length > resultSpan.length && resultParagraph.length < resultDiv.length)
-            result = resultDiv
+            resultDiv
         else
-            result = resultParagraph
+            resultParagraph
 
         return htmlDecode(result)
     }
@@ -266,7 +266,7 @@ class GetSourceSync(
     }
 
     private fun updateMetaTag(metaTags: HashMap<String, String>, url: String, value: String?) {
-        if (value != null && value.length > 0) {
+        if (value != null && value.isNotEmpty()) {
             metaTags[url] = value
         }
     }
